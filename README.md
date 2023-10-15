@@ -10,7 +10,7 @@ Allows to copy answers from a previous test to a new one.
 ![222](https://github.com/njuh0/AutoMoodle/assets/14272492/f9aec4ce-1364-4644-99d1-87a68f020ec2)
 
 > [!NOTE]
-> ***Works on limited types of input***
+> ***Works with limited types of input***
 > ### Supported input types:
 > * text (may not work)
 > * checkbox
