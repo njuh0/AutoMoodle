@@ -75,33 +75,35 @@ function parseShortAnswerDiv(div) {
 
 function parseMultianswerDiv(div) {
     var content = div.getElementsByClassName("content")[0];
-    var p = content.getElementsByTagName("p")[0].childNodes;
-
-    var question = content.getElementsByTagName("p")[0].textContent;
-
-   
-    // var answerDiv = div.getElementsByClassName("answer")[0];
-    // var input = answerDiv.getElementsByTagName("input")[0];
-    // var value = input.value;
-    // console.log('value', value);
-
-    // console.log('p', p)
+    var pRaw = content.getElementsByTagName("p");
     textAnswers = [];
-    for (var i = 0; i < p.length; i++) {
-        if (p[i].tagName == 'SPAN') {
-            var spanElement = p[i];
-            var correctIcon = spanElement.querySelectorAll('[title="Correct"]');
-            // coppy only correct answers
-            if (correctIcon.length > 0) {
-                var input = spanElement.getElementsByTagName("input")[0];
-                textAnswers.push(input.value);
-                // console.log('input', input)
-            } else {
-                textAnswers.push('');
+    var question = content.getElementsByTagName("p")[0].textContent;
+    pRaw.forEach(element => {
+        
+        var p = element.childNodes;
+        
+        // var answerDiv = div.getElementsByClassName("answer")[0];
+        // var input = answerDiv.getElementsByTagName("input")[0];
+        // var value = input.value;
+        // console.log('value', value);
+
+        // console.log('p', p)
+        for (var i = 0; i < p.length; i++) {
+            if (p[i].tagName == 'SPAN') {
+                var spanElement = p[i];
+                var correctIcon = spanElement.querySelectorAll('[title="Correct"]');
+                // coppy only correct answers
+                if (correctIcon.length > 0) {
+                    var input = spanElement.getElementsByTagName("input")[0];
+                    textAnswers.push(input.value);
+                    // console.log('input', input)
+                } else {
+                    textAnswers.push('');
+                }
+                // console.log('correctIcon', correctIcon);
             }
-            // console.log('correctIcon', correctIcon);
         }
-    }
+    });
     // console.log('p childNodes', p[0])
 
     // var spanElement = p.querySelector('span');
@@ -254,21 +256,27 @@ function writeMultianswerResponse(questionDiv, questionInfo) {
     // console.log('questionInfo', questionInfo);
 
     var content = questionDiv.getElementsByClassName("content")[0];
-    var p = content.getElementsByTagName("p")[0].childNodes;
-
+    var pRaw = content.getElementsByTagName("p");
+    iForQuestionInfo = 0; // when multiple <p> in question, variable is needed to save where the responses stopped applying
+    pRaw.forEach(element => {
+        
+        var p = element.childNodes;
+        
+        
+        // var answerDiv = div.getElementsByClassName("answer")[0];
+        // var input = answerDiv.getElementsByTagName("input")[0];
+        // var value = input.value;
+        // console.log('value', value);
     
-    // var answerDiv = div.getElementsByClassName("answer")[0];
-    // var input = answerDiv.getElementsByTagName("input")[0];
-    // var value = input.value;
-    // console.log('value', value);
-
-    var inputs = content.getElementsByTagName("p")[0].getElementsByTagName("input");
-    // console.log('p', inputs);
-
-    for(var i = 0; i < questionInfo.value.length; i++) {
-        // console.log('input', inputs[i]);
-        inputs[i].value = questionInfo.value[i];
-    }
+        var inputs = element.getElementsByTagName("input");
+        // console.log('p', inputs);
+    
+        for(var i = 0; i < inputs.length; i++) {
+            // console.log('input', inputs[i]);
+            inputs[i].value = questionInfo.value[iForQuestionInfo];
+            iForQuestionInfo++;
+        }
+    });
 }
 
 // function writeTrueFalseResponse(questionDiv, questionInfo) {
