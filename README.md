@@ -7,8 +7,8 @@ Tampermonkey extension script for the browser.
 
 ## What does it do
 Allows to copy answers from a previous test to a new one.
-**Works on limited types of input**
-Supported input type:
-- text (may not work)
-- checkbox
-- radio
+[^1]**Works on limited types of input**
+[^1]Supported input type:
+[^1] ♦ text (may not work)
+[^1] ♦ checkbox
+[^1] ♦ radio
