@@ -6,5 +6,12 @@ https://github.com/apsun/AutoMoodle
 Tampermonkey extension script for the browser.
 
 ## What does it do
-Allows to copy answers from a previous test to a new one.
-**Right now works only with input type checkbox and radio**
+Allows to copy answers from a previous test to a new one. 
+![222](https://github.com/njuh0/AutoMoodle/assets/14272492/f9aec4ce-1364-4644-99d1-87a68f020ec2)
+
+> [!NOTE]
+> ***Works with limited types of input***
+> ### Supported input types:
+> * text (may not work)
+> * checkbox
+> * radio
