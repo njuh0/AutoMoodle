@@ -9,6 +9,6 @@ Tampermonkey extension script for the browser.
 Allows to copy answers from a previous test to a new one.
 **Works on limited types of input**
 Supported input type:
-  ♦ text (may not work)
-  ♦ checkbox
-  ♦ radio
+  *♦ text (may not work)
+  *♦ checkbox
+  *♦ radio
