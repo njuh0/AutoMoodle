@@ -92,13 +92,22 @@ function parseMultianswerDiv(div) {
             if (p[i].tagName == 'SPAN') {
                 var spanElement = p[i];
                 var correctIcon = spanElement.querySelectorAll('[title="Correct"]');
+                // console.log('correctIcon', correctIcon);
                 // coppy only correct answers
+                var inputs = spanElement.getElementsByTagName("input");
                 if (correctIcon.length > 0) {
-                    var input = spanElement.getElementsByTagName("input")[0];
-                    textAnswers.push(input.value);
-                    // console.log('input', input)
+                    // if (inputs.length == 0 || inputs[0].type == "hidden") {
+                    //     continue;
+                    // }
+                    console.log('inputs', inputs)
+                    textAnswers.push(inputs[0].value);
+                    // console.log('input', inputs[0].value)
                 } else {
+                    if (inputs.length == 0 || inputs[0].type == "hidden") {
+                        continue;
+                    }
                     textAnswers.push('');
+                    
                 }
                 // console.log('correctIcon', correctIcon);
             }
@@ -266,15 +275,18 @@ function writeMultianswerResponse(questionDiv, questionInfo) {
         // var answerDiv = div.getElementsByClassName("answer")[0];
         // var input = answerDiv.getElementsByTagName("input")[0];
         // var value = input.value;
-        // console.log('value', value);
+        console.log('element', element);
     
         var inputs = element.getElementsByTagName("input");
-        // console.log('p', inputs);
-    
-        for(var i = 0; i < inputs.length; i++) {
-            // console.log('input', inputs[i]);
-            inputs[i].value = questionInfo.value[iForQuestionInfo];
-            iForQuestionInfo++;
+        if (inputs.length != 0) {
+            
+            // console.log('inputs', inputs);
+            
+            for(var i = 0; i < inputs.length; i++) {
+                // console.log('questionInfo', questionInfo.value[iForQuestionInfo]);
+                inputs[i].value = questionInfo.value[iForQuestionInfo];
+                iForQuestionInfo++;
+            }
         }
     });
 }
