@@ -17,8 +17,8 @@ function parseMultichoiceDiv(div) {
     var answerChoiceDivs = div.getElementsByClassName("answer")[0].childNodes;
     var answerChoices = [];
 
-    var question = div.getElementsByClassName("qtext")[0];
-    question = convertToPlainText(question);
+    var question = div.getElementsByClassName("qtext")[0].innerHTML;
+    // question = convertToPlainText(question);
 
     for (var i = 0; i < answerChoiceDivs.length; ++i) {
         var answerChoiceDiv = answerChoiceDivs[i];
@@ -55,42 +55,104 @@ function parseMultichoiceDiv(div) {
     };
 }
 
-function parseTrueFalseDiv(div) {
-    var obj = parseMultichoiceDiv(div);
-    obj.type = "truefalse";
-    return obj;
-}
-
-function parseMatchDiv(div) {
-    var questionTable = div.getElementsByClassName("answer")[0];
-    var rows = questionTable.getElementsByTagName("tr");
-    var answerChoices = [];
-    for (var i = 0; i < rows.length; ++i) {
-        var questionCell = rows[i].getElementsByClassName("text")[0];
-        var questionText = convertToPlainText(questionCell);
-        var answerCell = rows[i].getElementsByClassName("control")[0];
-        var answerBox = answerCell.getElementsByTagName("select")[0];
-        var answerText = answerBox.options[answerBox.selectedIndex].text;
-        answerChoices.push({
-            "question": questionText,
-            "answer": answerText
-        });
-    }
-    return {
-        "type": "match",
-        "answers": answerChoices
-    };
-}
-
-function parseNumericalDiv(div) {
+function parseShortAnswerDiv(div) {
     var answerDiv = div.getElementsByClassName("answer")[0];
     var input = answerDiv.getElementsByTagName("input")[0];
     var value = input.value;
+    console.log('value', value);
+
+    var question = div.getElementsByClassName("qtext")[0].innerHTML;
+    // question = convertToPlainText(question);
+
+    
+    
     return {
-        "type": "numerical",
-        "value": value
+        "type": "shortanswer",
+        "value": value,
+        "question": question
     };
 }
+
+function parseMultianswerDiv(div) {
+    var content = div.getElementsByClassName("content")[0];
+    var p = content.getElementsByTagName("p")[0].childNodes;
+
+    var question = content.getElementsByTagName("p")[0].textContent;
+    
+    // var answerDiv = div.getElementsByClassName("answer")[0];
+    // var input = answerDiv.getElementsByTagName("input")[0];
+    // var value = input.value;
+    // console.log('value', value);
+
+    // console.log('p', p)
+    textAnswers = [];
+    for(var i = 0; i < p.length; i++) {
+        if(p[i].tagName == 'SPAN') {
+            var spanElement = p[i];
+            var input = spanElement.getElementsByTagName("input")[0];
+            textAnswers.push(input.value);
+            // console.log('input', input)
+        }
+    }
+    // console.log('p childNodes', p[0])
+
+    // var spanElement = p.querySelector('span');
+    // console.log('spanElement', spanElement)
+
+    // var spanText = spanElement.textContent;
+    // // Remove the text of the <span> element from the <p> element
+    // var newText = p.textContent.replace(spanText, '[]');
+    // console.log('newText', newText)
+
+    // var question = p.textContent;
+    // console.log('textAnswers', textAnswers)
+
+    
+    return {
+        "type": "multianswer",
+        "value": textAnswers,
+        "question": question
+    };
+}
+
+// function parseTrueFalseDiv(div) {
+//     var obj = parseMultichoiceDiv(div);
+//     obj.type = "truefalse";
+//     return obj;
+// }
+
+
+
+// function parseMatchDiv(div) {
+//     var questionTable = div.getElementsByClassName("answer")[0];
+//     var rows = questionTable.getElementsByTagName("tr");
+//     var answerChoices = [];
+//     for (var i = 0; i < rows.length; ++i) {
+//         var questionCell = rows[i].getElementsByClassName("text")[0];
+//         var questionText = convertToPlainText(questionCell);
+//         var answerCell = rows[i].getElementsByClassName("control")[0];
+//         var answerBox = answerCell.getElementsByTagName("select")[0];
+//         var answerText = answerBox.options[answerBox.selectedIndex].text;
+//         answerChoices.push({
+//             "question": questionText,
+//             "answer": answerText
+//         });
+//     }
+//     return {
+//         "type": "match",
+//         "answers": answerChoices
+//     };
+// }
+
+// function parseNumericalDiv(div) {
+//     var answerDiv = div.getElementsByClassName("answer")[0];
+//     var input = answerDiv.getElementsByTagName("input")[0];
+//     var value = input.value;
+//     return {
+//         "type": "numerical",
+//         "value": value
+//     };
+// }
 
 function parseAttemptHtml(html) {
     var container = document.createElement("div");
@@ -107,29 +169,25 @@ function parseAttemptHtml(html) {
         if (questionDiv.className.indexOf("multichoice") >= 0) {
             console.log('multichoice');
             questions[questionId] = parseMultichoiceDiv(questionDiv);
-        } else if (questionDiv.className.indexOf("truefalse") >= 0) {
-            console.log('truefalse');
-            questions[questionId] = parseTrueFalseDiv(questionDiv);
-        } else if (questionDiv.className.indexOf("match") >= 0) {
-            console.log('match');
-            questions[questionId] = parseMatchDiv(questionDiv);
-        } else if (questionDiv.className.indexOf("numerical") >= 0) {
-            console.log('numerical');
-            questions[questionId] = parseNumericalDiv(questionDiv);
-        }
-        // if (questionDiv.className.indexOf("multichoice") >= 0) {
-        //     var p = parseMultichoiceDiv(questionDiv)
-        //     questions[p.answers['question']] = p;
-        // } else if (questionDiv.className.indexOf("truefalse") >= 0) {
-        //     var p = parseMultichoiceDiv(questionDiv)
-        //     questions[p.answers['question']] = p;
+        } else if (questionDiv.className.indexOf("shortanswer") >= 0) {
+            console.log('shortanswer');
+            questions[questionId] = parseShortAnswerDiv(questionDiv);
+        }  else if (questionDiv.className.indexOf("multianswer") >= 0) {
+            console.log('multianswer');
+            questions[questionId] = parseMultianswerDiv(questionDiv);
+        } 
+
+        // else if (questionDiv.className.indexOf("truefalse") >= 0) {
+        //     console.log('truefalse');
+        //     questions[questionId] = parseTrueFalseDiv(questionDiv);
         // } else if (questionDiv.className.indexOf("match") >= 0) {
-        //     var p = parseMultichoiceDiv(questionDiv)
-        //     questions[p.answers['question']] = p;
+        //     console.log('match');
+        //     questions[questionId] = parseMatchDiv(questionDiv);
         // } else if (questionDiv.className.indexOf("numerical") >= 0) {
-        //     var p = parseMultichoiceDiv(questionDiv)
-        //     questions[p.answers['question']] = p;
+        //     console.log('numerical');
+        //     questions[questionId] = parseNumericalDiv(questionDiv);
         // }
+
     }
     return questions;
 }
@@ -170,43 +228,82 @@ function writeMultichoiceResponse(questionDiv, previousQuestionInfo) {
     }
 }
 
-function writeTrueFalseResponse(questionDiv, questionInfo) {
-    writeMultichoiceResponse(questionDiv, questionInfo);
-}
+function writeShortAnswerResponse(questionDiv, questionInfo) {
+    var answerDiv = questionDiv.getElementsByClassName("answer")[0];
+    answerDiv = answerDiv.getElementsByTagName("input");
 
-function writeMatchResponse(questionDiv, questionInfo) {
-    var questionTable = questionDiv.getElementsByClassName("answer")[0];
-    var rows = questionTable.getElementsByTagName("tr");
-    var previousAnswers = questionInfo.answers;
-    for (var i = 0; i < rows.length; ++i) {
-        var questionCell = rows[i].getElementsByClassName("text")[0];
-        var questionText = convertToPlainText(questionCell);
-        var answerCell = rows[i].getElementsByClassName("control")[0];
-        var answerBox = answerCell.getElementsByTagName("select")[0];
-        var answerOptions = answerBox.options;
-        for (var j = 0; j < previousAnswers.length; ++j) {
-            var previousAnswer = previousAnswers[j];
-            if (previousAnswer.question == questionText) {
-                for (var k = 0; k < answerOptions.length; ++k) {
-                    if (previousAnswer.answer == answerOptions[k].text) {
-                        answerBox.selectedIndex = k;
-                        break;
-                    }
-                }
-                break;
-            }
+    var previousAnswer = questionInfo.value;
+    for (var i = 0; i < answerDiv.length; i++) {
+        if (answerDiv[i].type != "hidden") {
+            answerDiv[i].value = previousAnswer;
+            console.log(answerDiv[i], previousAnswer);
+            break;
         }
     }
 }
 
-function writeNumericalResponse(questionDiv, questionInfo) {
-    var answerDiv = questionDiv.getElementsByClassName("answer")[0];
-    var input = answerDiv.getElementsByTagName("input")[0];
-    input.value = questionInfo.value;
+function writeMultianswerResponse(questionDiv, questionInfo) {
+    // console.log('questionInfo', questionInfo);
+
+    var content = questionDiv.getElementsByClassName("content")[0];
+    var p = content.getElementsByTagName("p")[0].childNodes;
+
+    
+    // var answerDiv = div.getElementsByClassName("answer")[0];
+    // var input = answerDiv.getElementsByTagName("input")[0];
+    // var value = input.value;
+    // console.log('value', value);
+
+    var inputs = content.getElementsByTagName("p")[0].getElementsByTagName("input");
+    // console.log('p', inputs);
+
+    for(var i = 0; i < questionInfo.value.length; i++) {
+        // console.log('input', inputs[i]);
+        inputs[i].value = questionInfo.value[i];
+    }
 }
+
+// function writeTrueFalseResponse(questionDiv, questionInfo) {
+//     writeMultichoiceResponse(questionDiv, questionInfo);
+// }
+
+// function writeMatchResponse(questionDiv, questionInfo) {
+//     var questionTable = questionDiv.getElementsByClassName("answer")[0];
+//     var rows = questionTable.getElementsByTagName("tr");
+//     var previousAnswers = questionInfo.answers;
+//     for (var i = 0; i < rows.length; ++i) {
+//         var questionCell = rows[i].getElementsByClassName("text")[0];
+//         var questionText = convertToPlainText(questionCell);
+//         var answerCell = rows[i].getElementsByClassName("control")[0];
+//         var answerBox = answerCell.getElementsByTagName("select")[0];
+//         var answerOptions = answerBox.options;
+//         for (var j = 0; j < previousAnswers.length; ++j) {
+//             var previousAnswer = previousAnswers[j];
+//             if (previousAnswer.question == questionText) {
+//                 for (var k = 0; k < answerOptions.length; ++k) {
+//                     if (previousAnswer.answer == answerOptions[k].text) {
+//                         answerBox.selectedIndex = k;
+//                         break;
+//                     }
+//                 }
+//                 break;
+//             }
+//         }
+//     }
+// }
+
+// function writeNumericalResponse(questionDiv, questionInfo) {
+//     var answerDiv = questionDiv.getElementsByClassName("answer")[0];
+//     var input = answerDiv.getElementsByTagName("input")[0];
+//     input.value = questionInfo.value;
+// }
+
+
 
 function writeResponses(iframe, attemptChoices) {
     var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    // console.log('attemptChoices', attemptChoices); // all previous questions
+
     for (var key in attemptChoices) {
         if (!attemptChoices.hasOwnProperty(key)) {
             continue;
@@ -220,7 +317,8 @@ function writeResponses(iframe, attemptChoices) {
 
         
         var questionInfo = attemptChoices[key]; // get previous question by key
-        // console.log('attemptChoices', attemptChoices); // all previous questions
+        var questionType = questionInfo.type;
+
         // console.log('questionInfo', questionInfo); // previous question
         // // var questionDiv = iframeDoc.getElementById(key);
         // var selector = '[id^="' + keyParts[0] + '-"][id$="-' + keyParts[keyParts.length - 1] + '"]';
@@ -231,11 +329,25 @@ function writeResponses(iframe, attemptChoices) {
         // for every question and check if contains     var question = div.getElementsByClassName("qtext")[0]; question = convertToPlainText(question);
         var selector = '[id^="question-"]';
         var newQuestionDivs = iframeDoc.querySelectorAll(selector);
+        // console.log("newQuestionDivs", newQuestionDivs);
         for (var i = 0; i < newQuestionDivs.length; ++i) {
+
             var questionDiv = newQuestionDivs[i];
-            var question = questionDiv.getElementsByClassName("qtext")[0];
-            question = convertToPlainText(question);
+            var question;
+
+            if (questionInfo.type == "multianswer") {
+                var content = questionDiv.getElementsByClassName("content")[0];
+                question = content.getElementsByTagName("p")[0].textContent;
+                // console.log("question", question);
+            } else {
+                question = questionDiv.getElementsByClassName("qtext")[0].innerHTML;
+                // console.log("question", question);
+                // question = convertToPlainText(question);
+                // console.log("questionPlainText", question);
+            }
+
             if (question == questionInfo.question) {
+                // console.log(questionInfo.type);
                 break;
             }
         }
@@ -243,16 +355,20 @@ function writeResponses(iframe, attemptChoices) {
         // console.log("questionDiv", questionDiv);
         // console.log("questionInfo", questionInfo);
 
-        var questionType = questionInfo.type;
         if (questionType == "multichoice") {
             writeMultichoiceResponse(questionDiv, questionInfo);
-        } else if (questionType == "truefalse") {
-            writeTrueFalseResponse(questionDiv, questionInfo);
-        } else if (questionType == "match") {
-            writeMatchResponse(questionDiv, questionInfo);
-        } else if (questionType == "numerical") {
-            writeNumericalResponse(questionDiv, questionInfo);
+        } else if (questionType == "shortanswer") {
+            writeShortAnswerResponse(questionDiv, questionInfo);
+        } else if (questionType == "multianswer") {
+            writeMultianswerResponse(questionDiv, questionInfo);
         }
+        // } else if (questionType == "truefalse") {
+        //     writeTrueFalseResponse(questionDiv, questionInfo);
+        // } else if (questionType == "match") {
+        //     writeMatchResponse(questionDiv, questionInfo);
+        // } else if (questionType == "numerical") {
+        //     writeNumericalResponse(questionDiv, questionInfo);
+        // }
     }
     iframe.onload = function() {
         document.location.reload();
@@ -263,9 +379,9 @@ function writeResponses(iframe, attemptChoices) {
 function startAttempt(attemptChoices) {
     var iframe = document.createElement("iframe");
     // iframe.style = "display:none";
-    // iframe width and height must be set 400
-    iframe.width = "600";
-    iframe.height = "600";
+    // iframe width and height must be set
+    iframe.width = "1000";
+    iframe.height = "1000";
 
     iframe.name = "attemptframe";
     iframe.onload = function() {
@@ -285,6 +401,7 @@ function copyAttempt(attemptUrl) {
         url: attemptUrl,
         onload: function(response) {
             var attemptChoices = parseAttemptHtml(response.responseText);
+            
             startAttempt(attemptChoices);
         }
     });
