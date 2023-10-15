@@ -78,7 +78,8 @@ function parseMultianswerDiv(div) {
     var p = content.getElementsByTagName("p")[0].childNodes;
 
     var question = content.getElementsByTagName("p")[0].textContent;
-    
+
+   
     // var answerDiv = div.getElementsByClassName("answer")[0];
     // var input = answerDiv.getElementsByTagName("input")[0];
     // var value = input.value;
@@ -86,12 +87,19 @@ function parseMultianswerDiv(div) {
 
     // console.log('p', p)
     textAnswers = [];
-    for(var i = 0; i < p.length; i++) {
-        if(p[i].tagName == 'SPAN') {
+    for (var i = 0; i < p.length; i++) {
+        if (p[i].tagName == 'SPAN') {
             var spanElement = p[i];
-            var input = spanElement.getElementsByTagName("input")[0];
-            textAnswers.push(input.value);
-            // console.log('input', input)
+            var correctIcon = spanElement.querySelectorAll('[title="Correct"]');
+            // coppy only correct answers
+            if (correctIcon.length > 0) {
+                var input = spanElement.getElementsByTagName("input")[0];
+                textAnswers.push(input.value);
+                // console.log('input', input)
+            } else {
+                textAnswers.push('');
+            }
+            // console.log('correctIcon', correctIcon);
         }
     }
     // console.log('p childNodes', p[0])
@@ -379,7 +387,6 @@ function writeResponses(iframe, attemptChoices) {
 function startAttempt(attemptChoices) {
     var iframe = document.createElement("iframe");
     // iframe.style = "display:none";
-    // iframe width and height must be set
     iframe.width = "1000";
     iframe.height = "1000";
 
