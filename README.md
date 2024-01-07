@@ -1,5 +1,5 @@
 # AutoMoodle
-Revives an 8 year old git repository "AutoMoodle" 
+Revives an 9 years old git repository "AutoMoodle" 
 https://github.com/apsun/AutoMoodle
 
 ## How to use
